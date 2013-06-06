@@ -4,7 +4,7 @@ class BitPayHelperTest < Test::Unit::TestCase
   include ActiveMerchant::Billing::Integrations
   
   def setup
-    @helper = BitPay::Helper.new('order-500','cody@example.com', :amount => '5.00', :currency => 'USD')
+    @helper = BitPay::Helper.new('order-500','cody@example.com', :amount => 500, :currency => 'USD')
   end
  
   def test_basic_helper_fields
@@ -12,6 +12,11 @@ class BitPayHelperTest < Test::Unit::TestCase
 
     assert_field 'price', '5.00'
     assert_field 'orderID', 'order-500'
+  end
+
+  def test_currency_with_no_cents
+    @helper = BitPay::Helper.new('order-500', 'cody@example.com', :amount => 500, :currency => 'JPY')
+    assert_field 'price', '500.00'
   end
   
   def test_customer_fields

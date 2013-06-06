@@ -28,6 +28,7 @@ module ActiveMerchant #:nodoc:
 
           def initialize(order, account, options = {})
             super
+            add_amount(options)
           end
 
           def customer(options = {})
@@ -35,6 +36,12 @@ module ActiveMerchant #:nodoc:
             last = options.delete(:last_name)
             options[:name] = "#{first} #{last}"
             super options
+          end
+
+          private
+
+          def add_amount(options)
+            add_field('price', "%.2f" % Money.new(options[:amount], options[:currency]).to_f)
           end
 
         end
