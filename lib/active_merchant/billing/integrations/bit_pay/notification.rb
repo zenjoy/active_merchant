@@ -5,11 +5,6 @@ module ActiveMerchant #:nodoc:
     module Integrations #:nodoc:
       module BitPay
         class Notification < ActiveMerchant::Billing::Integrations::Notification
-          def initialize(post, options = {})
-            super
-
-          end
-
           def complete?
             ['complete', 'confirmed'].include?(status)
           end
@@ -62,11 +57,18 @@ module ActiveMerchant #:nodoc:
             payload = raw
 
             response = ssl_get(BitPay.service_url + "/invoice/#{transaction_id}")
-            data = JSON.parse(response.body)
 
             # Replace with the appropriate codes
-            raise StandardError.new("Faulty BitPay result: #{response.body}") unless data.has_key?(:status)
-            data.status == "confirmed" || data.status == "complete"
+            raise StandardError.new("Faulty BitPay result: #{response.body}") unless response.code == 200
+
+            parse(response.body)
+            true
+          end
+
+          def initialize(post, options = {})
+            super
+
+            @api_key = options[:credential1]
           end
 
           private
@@ -82,7 +84,7 @@ module ActiveMerchant #:nodoc:
             http.use_ssl = true
 
             request = Net::HTTP::Get.new(uri.request_uri)
-            request.basic_auth(options[:auth_user], options[:auth_pass])
+            request.basic_auth(@api_key, '')
             http.request(request)
           end
         end

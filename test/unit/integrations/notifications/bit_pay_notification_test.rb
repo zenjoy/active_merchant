@@ -24,7 +24,13 @@ class BitPayNotificationTest < Test::Unit::TestCase
 
   # Replace with real successful acknowledgement code
   def test_acknowledgement
+    @bit_pay.stubs(:ssl_get).returns(stub(:code => 200, :body => invoice_raw_data))
+    assert @bit_pay.acknowledge
     
+    @bit_pay.stubs(:ssl_get).returns(stub(:code => 500, :body => invoice_raw_data))
+    assert_raise StandardError do
+      @bit_pay.acknowledge
+    end
   end
 
   def test_send_acknowledgement
@@ -37,5 +43,9 @@ class BitPayNotificationTest < Test::Unit::TestCase
   private
   def http_raw_data
     '{"id":"w1GRw1q86WPSUlT1r2cGsCZffrUM-KqT9fMFnbC9jo=","url":"https://bitpay.com/invoice/w1GRw1q86WPSUlT1r2cGsCZffrUM-KqT9fMFnbC9jo=","status":"complete","btcPrice":"0.0083","price":1,"currency":"USD","invoiceTime":1370539476654,"expirationTime":1370540376654,"currentTime":1370539573956}'
+  end
+
+  def invoice_raw_data
+    '{"id":"W9GRw1q86WPSUlT1U2cGsCZfXXrUM-KqT9fMFnbC9jo=","url":"https://bitpay.com/invoice/W9GRw1q86WPSUlT1U2cGsCZfXXrUM-KqT9fMFnbC9jo=","status":"new","btcPrice":"0.0083","price":1,"currency":"USD","invoiceTime":1370539476654,"expirationTime":1370540376654,"currentTime":1370539476666}'
   end
 end
