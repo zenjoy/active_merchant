@@ -25,6 +25,18 @@ module ActiveMerchant #:nodoc:
           mapping :description, 'itemDesc'
 
           SUPPORTED_COUNTRY_CODES = ['US', 'CA']
+
+          def initialize(order, account, options = {})
+            super
+          end
+
+          def customer(options = {})
+            first = options.delete(:first_name)
+            last = options.delete(:last_name)
+            options[:name] = "#{first} #{last}"
+            super options
+          end
+
         end
       end
     end
