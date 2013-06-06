@@ -6,7 +6,7 @@ module ActiveMerchant #:nodoc:
       module BitPay
         class Notification < ActiveMerchant::Billing::Integrations::Notification
           def complete?
-            status == 'complete'
+            ['complete', 'confirmed'].include?(status)
           end
 
           def item_id
@@ -14,12 +14,7 @@ module ActiveMerchant #:nodoc:
           end
 
           def transaction_id
-            params['orderID']
-          end
-
-          # When was this payment received by the client.
-          def received_at
-            params['']
+            params['id']
           end
 
           def payer_email
@@ -29,6 +24,17 @@ module ActiveMerchant #:nodoc:
           # the money amount we received in X.2 decimal.
           def gross
             params['price']
+          end
+
+          def gross_cents
+            (params['price'].to_f * 100.0)
+          end
+
+          def currency
+            params['currency']
+          end
+
+          def received_at
           end
 
           # Was this a test transaction?
@@ -43,17 +49,6 @@ module ActiveMerchant #:nodoc:
           # Acknowledge the transaction to BitPay. This method has to be called after a new
           # apc arrives. BitPay will verify that all the information we received are correct and will return a
           # ok or a fail.
-          #
-          # Example:
-          #
-          #   def ipn
-          #     notify = BitPayNotification.new(request.raw_post)
-          #
-          #     if notify.acknowledge
-          #       ... process order ... if notify.complete?
-          #     else
-          #       ... log possible hacking attempt ...
-          #     end
           def acknowledge
             payload = raw
 
@@ -66,7 +61,7 @@ module ActiveMerchant #:nodoc:
 
           # Take the posted data and move the relevant data into a hash
           def parse(post)
-            params = JSON.parse(post)
+            @params = JSON.parse(post)
           end
         end
       end

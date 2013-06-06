@@ -6,7 +6,7 @@ module ActiveMerchant #:nodoc:
           # Replace with the real mapping
           mapping :account, 'api_key'
           mapping :amount, 'price'
-        
+
           mapping :order, 'orderID'
 
           mapping :customer, :name       => 'buyerName',
@@ -25,10 +25,6 @@ module ActiveMerchant #:nodoc:
           mapping :description, 'itemDesc'
 
           SUPPORTED_COUNTRY_CODES = ['US', 'CA']
-
-          def initialize(order, account, options = {})
-
-          end
         end
       end
     end
