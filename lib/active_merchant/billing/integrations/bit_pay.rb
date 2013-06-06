@@ -7,7 +7,7 @@ module ActiveMerchant #:nodoc:
       module BitPay
 
         mattr_accessor :service_url
-        self.service_url = 'https://www.example.com'
+        self.service_url = 'https://bitpay.com/api'
 
         def self.notification(post)
           Notification.new(post)
