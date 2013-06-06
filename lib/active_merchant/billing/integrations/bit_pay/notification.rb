@@ -6,15 +6,15 @@ module ActiveMerchant #:nodoc:
       module BitPay
         class Notification < ActiveMerchant::Billing::Integrations::Notification
           def complete?
-            params['']
+            status == 'complete'
           end
 
           def item_id
-            params['']
+            params['itemCode']
           end
 
           def transaction_id
-            params['']
+            params['orderID']
           end
 
           # When was this payment received by the client.
@@ -23,29 +23,21 @@ module ActiveMerchant #:nodoc:
           end
 
           def payer_email
-            params['']
-          end
-
-          def receiver_email
-            params['']
-          end
-
-          def security_key
-            params['']
+            params['buyerEmail']
           end
 
           # the money amount we received in X.2 decimal.
           def gross
-            params['']
+            params['price']
           end
 
           # Was this a test transaction?
           def test?
-            params[''] == 'test'
+            false
           end
 
           def status
-            params['']
+            params['status']
           end
 
           # Acknowledge the transaction to BitPay. This method has to be called after a new
@@ -65,20 +57,6 @@ module ActiveMerchant #:nodoc:
           def acknowledge
             payload = raw
 
-            uri = URI.parse(BitPay.notification_confirmation_url)
-
-            request = Net::HTTP::Post.new(uri.path)
-
-            request['Content-Length'] = "#{payload.size}"
-            request['User-Agent'] = "Active Merchant -- http://home.leetsoft.com/am"
-            request['Content-Type'] = "application/x-www-form-urlencoded"
-
-            http = Net::HTTP.new(uri.host, uri.port)
-            http.verify_mode    = OpenSSL::SSL::VERIFY_NONE unless @ssl_strict
-            http.use_ssl        = true
-
-            response = http.request(request, payload)
-
             # Replace with the appropriate codes
             raise StandardError.new("Faulty BitPay result: #{response.body}") unless ["AUTHORISED", "DECLINED"].include?(response.body)
             response.body == "AUTHORISED"
@@ -88,11 +66,7 @@ module ActiveMerchant #:nodoc:
 
           # Take the posted data and move the relevant data into a hash
           def parse(post)
-            @raw = post.to_s
-            for line in @raw.split('&')
-              key, value = *line.scan( %r{^([A-Za-z0-9_.]+)\=(.*)$} ).flatten
-              params[key] = CGI.unescape(value)
-            end
+            params = JSON.parse(post)
           end
         end
       end
