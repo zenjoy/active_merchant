@@ -25,6 +25,13 @@ class BaseTest < Test::Unit::TestCase
     assert_instance_of Integrations::Chronopay::Notification, chronopay.notification('name=cody')
   end
 
+  def test_should_return_an_iframe_by_name
+    bitpay = Base.iframe(:bit_pay)
+
+    assert_equal Iframes::BitPay, bitpay
+    assert_instance_of Iframes::BitPay::Notification, bitpay.notification("{\"id\": 1}")
+  end
+
   def test_should_set_modes
     Base.mode = :test
     assert_equal :test, Base.mode

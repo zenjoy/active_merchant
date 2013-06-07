@@ -47,6 +47,10 @@ module ActiveMerchant #:nodoc:
         Billing::Integrations.const_get("#{name.to_s.downcase}".camelize)
       end
 
+      def self.iframe(name)
+        Billing::Iframes.const_get("#{name.to_s.downcase}".camelize)
+      end
+
       # A check to see if we're in test mode
       def self.test?
         self.gateway_mode == :test
