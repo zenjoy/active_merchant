@@ -41,6 +41,10 @@ module ActiveMerchant #:nodoc:
           def received_at
           end
 
+          def order
+            params['posData']
+          end
+
           # Was this a test transaction?
           def test?
             false
