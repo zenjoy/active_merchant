@@ -5,17 +5,16 @@ class BitPayHelperTest < Test::Unit::TestCase
   include ActiveMerchant::Billing::Iframes
 
   def setup
+    BitPay::Helper.any_instance.stubs(:ssl_post).returns(stub(:body => CommonData::BitPay.raw_invoice_json))
     @helper = BitPay::Helper.new('order-500','cody@example.com', :amount => 500, :currency => 'USD')
   end
 
   def test_iframe_url
-    @helper.stubs(:ssl_post).returns(stub(:body => CommonData::BitPay.raw_invoice_json))
-
     assert_equal "https://bitpay.com/invoice/?id=W9GRw1q86WPSUlT1U2cGsCZfXXrUM-KqT9fMFnbC9jo=&view=iframe", @helper.iframe_url
   end
 
   def test_calling_iframe_multiple_times_doesnt_generate_multiple_urls
-    @helper.expects(:ssl_post).returns(stub(:body =>CommonData::BitPay.raw_invoice_json)).once
+    @helper.expects(:ssl_post).returns(stub(:body =>CommonData::BitPay.raw_invoice_json)).never
 
     @helper.iframe_url
     @helper.iframe_url
@@ -24,13 +23,13 @@ class BitPayHelperTest < Test::Unit::TestCase
   def test_basic_helper_fields
     assert_field 'api_key', 'cody@example.com'
 
-    assert_field 'price', '5.00'
+    assert_field 'price', '500'
     assert_field 'posData', 'order-500'
   end
 
   def test_currency_with_no_cents
     @helper = BitPay::Helper.new('order-500', 'cody@example.com', :amount => 500, :currency => 'JPY')
-    assert_field 'price', '500.00'
+    assert_field 'price', '500'
   end
 
   def test_customer_fields

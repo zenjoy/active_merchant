@@ -5,7 +5,11 @@ module ActiveMerchant #:nodoc:
     module Iframes #:nodoc:
       module BitPay
         class Helper < ActiveMerchant::Billing::Iframes::Helper
+          cattr_accessor :iframe_base_url
+
           self.service_url = 'https://bitpay.com/api'
+          self.iframe_base_url = "https://bitpay.com"
+
           # Replace with the real mapping
           mapping :account, 'api_key'
           mapping :amount, 'price'
@@ -33,6 +37,7 @@ module ActiveMerchant #:nodoc:
           def initialize(order, account, options = {})
             super
             @api_key = account
+            create_invoice
           end
 
           def customer(options = {})
@@ -43,19 +48,24 @@ module ActiveMerchant #:nodoc:
           end
 
           def iframe_url
-            @iframe_url ||= "#{iframe_base_url}/invoice/?id=#{invoice_id}&view=iframe"
+            @iframe_url ||= "#{iframe_base_url}/invoice/?id=#{transaction_id}&view=iframe"
+          end
+
+          def transaction_id
+            @invoice['id']
+          end
+
+          def expires_in
+            (@invoice['expireTime'] - @invoice['currentTime']) / 1000
           end
 
           private
 
-          def iframe_base_url
-            "https://bitpay.com"
-          end
-
-          def invoice_id
+          def create_invoice
+            return if @invoice
             new_invoice_url = "#{service_url}/invoice"
             response = ssl_post(new_invoice_url, :data => @fields.to_json)
-            JSON.parse(response.body)['id']
+            @invoice = JSON.parse(response.body)
           end
 
           def ssl_post(url, options = {})
