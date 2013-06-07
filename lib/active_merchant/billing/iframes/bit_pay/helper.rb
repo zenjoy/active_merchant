@@ -33,7 +33,6 @@ module ActiveMerchant #:nodoc:
           def initialize(order, account, options = {})
             super
             @api_key = account
-            add_amount(options)
           end
 
           def customer(options = {})
@@ -51,10 +50,6 @@ module ActiveMerchant #:nodoc:
 
           def iframe_base_url
             "https://bitpay.com"
-          end
-
-          def add_amount(options)
-            add_field('price', "%.2f" % Money.new(options[:amount], options[:currency]).to_f)
           end
 
           def invoice_id
