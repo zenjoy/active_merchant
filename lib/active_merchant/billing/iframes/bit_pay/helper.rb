@@ -60,7 +60,7 @@ module ActiveMerchant #:nodoc:
           end
 
           def invoice
-            @invoice = create_invoice
+            @invoice ||= create_invoice
           end
 
           private
