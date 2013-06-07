@@ -20,6 +20,12 @@ class BitPayHelperTest < Test::Unit::TestCase
     @helper.iframe_url
   end
 
+  def test_notify_url
+    @helper.notify_url = 'http://test'
+
+    assert_field 'notificationURL', 'http://test'
+  end
+
   def test_basic_helper_fields
     assert_field 'api_key', 'cody@example.com'
 
@@ -57,7 +63,7 @@ class BitPayHelperTest < Test::Unit::TestCase
 
   def test_unknown_address_mapping
     @helper.billing_address :farm => 'CA'
-    assert_equal 4, @helper.fields.size
+    assert_equal 5, @helper.fields.size
   end
 
   def test_unknown_mapping

@@ -38,6 +38,7 @@ module ActiveMerchant #:nodoc:
             super
             @api_key = account
             create_invoice
+            add_field 'fullNotifications', true
           end
 
           def customer(options = {})
