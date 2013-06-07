@@ -37,7 +37,6 @@ module ActiveMerchant #:nodoc:
           def initialize(order, account, options = {})
             super
             @api_key = account
-            create_invoice
             add_field 'fullNotifications', true
           end
 
@@ -53,20 +52,23 @@ module ActiveMerchant #:nodoc:
           end
 
           def transaction_id
-            @invoice['id']
+            invoice['id']
           end
 
           def expires_in
-            (@invoice['expirationTime'] - @invoice['currentTime']) / 1000
+            (invoice['expirationTime'] - invoice['currentTime']) / 1000
+          end
+
+          def invoice
+            @invoice = create_invoice
           end
 
           private
 
           def create_invoice
-            return if @invoice
             new_invoice_url = "#{service_url}/invoice"
             response = ssl_post(new_invoice_url, :data => @fields.to_json)
-            @invoice = JSON.parse(response.body)
+            invoice = JSON.parse(response.body)
           end
 
           def ssl_post(url, options = {})
