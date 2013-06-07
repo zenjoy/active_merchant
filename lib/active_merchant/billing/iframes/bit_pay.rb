@@ -12,6 +12,10 @@ module ActiveMerchant #:nodoc:
         def self.notification(post)
           Notification.new(post)
         end
+
+        def self.helper(order, account, options={})
+          Helper.new(order, account, options)
+        end
       end
     end
   end
