@@ -1,7 +1,9 @@
 require 'test_helper'
+require 'common_data/bit_pay'
 
 class BitPayNotificationTest < Test::Unit::TestCase
-  include ActiveMerchant::Billing::Integrations
+  include ActiveMerchant::Billing::Iframes
+  include CommonData::BitPay
 
   def setup
     @bit_pay = BitPay::Notification.new(http_raw_data, :credential1 => "api_key")
@@ -26,14 +28,11 @@ class BitPayNotificationTest < Test::Unit::TestCase
   def test_acknowledgement
     @bit_pay.stubs(:ssl_get).returns(stub(:code => 200, :body => invoice_raw_data))
     assert @bit_pay.acknowledge
-    
+
     @bit_pay.stubs(:ssl_get).returns(stub(:code => 500, :body => invoice_raw_data))
     assert_raise StandardError do
       @bit_pay.acknowledge
     end
-  end
-
-  def test_send_acknowledgement
   end
 
   def test_respond_to_acknowledge
@@ -46,6 +45,6 @@ class BitPayNotificationTest < Test::Unit::TestCase
   end
 
   def invoice_raw_data
-    '{"id":"W9GRw1q86WPSUlT1U2cGsCZfXXrUM-KqT9fMFnbC9jo=","url":"https://bitpay.com/invoice/W9GRw1q86WPSUlT1U2cGsCZfXXrUM-KqT9fMFnbC9jo=","status":"new","btcPrice":"0.0083","price":1,"currency":"USD","invoiceTime":1370539476654,"expirationTime":1370540376654,"currentTime":1370539476666}'
+    CommonData::BitPay.raw_invoice_json
   end
 end

@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/bit_pay/notification.rb'
 
 module ActiveMerchant #:nodoc:
   module Billing #:nodoc:
-    module Integrations #:nodoc:
+    module Iframes #:nodoc:
       module BitPay
 
         mattr_accessor :service_url

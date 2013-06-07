@@ -1,11 +1,15 @@
+require 'money'
+
 module ActiveMerchant #:nodoc:
   module Billing #:nodoc:
-    module Integrations #:nodoc:
+    module Iframes #:nodoc:
       module BitPay
-        class Helper < ActiveMerchant::Billing::Integrations::Helper
+        class Helper < ActiveMerchant::Billing::Iframes::Helper
+          self.service_url = 'https://bitpay.com/api'
           # Replace with the real mapping
           mapping :account, 'api_key'
           mapping :amount, 'price'
+          mapping :currency, 'currency'
 
           mapping :order, 'orderID'
 
@@ -28,6 +32,7 @@ module ActiveMerchant #:nodoc:
 
           def initialize(order, account, options = {})
             super
+            @api_key = account
             add_amount(options)
           end
 
@@ -38,12 +43,45 @@ module ActiveMerchant #:nodoc:
             super options
           end
 
+          def iframe_url
+            @iframe_url ||= "#{iframe_base_url}/invoice/?id=#{invoice_id}&view=iframe"
+          end
+
           private
+
+          def iframe_base_url
+            "https://bitpay.com"
+          end
 
           def add_amount(options)
             add_field('price', "%.2f" % Money.new(options[:amount], options[:currency]).to_f)
           end
 
+          def invoice_id
+            new_invoice_url = "#{service_url}/invoice"
+            response = ssl_post(new_invoice_url, :data => @fields.to_json)
+            JSON.parse(response.body)['id']
+          end
+
+          def ssl_post(url, options = {})
+            uri = URI.parse(url)
+            http = Net::HTTP.new(uri.host, uri.port)
+            http.use_ssl = true
+
+            request = Net::HTTP::Post.new(uri.request_uri)
+            request.content_type = "application/json"
+            request.body = @fields.to_json
+            headers.each { |k,v| request[k] = v }
+
+            http.request(request)
+          end
+
+          def headers
+            {
+              "Authorization" => "Basic " + Base64.strict_encode64(@api_key.to_s).strip,
+              "User-Agent" => "BitPay v1.0/ActiveMerchant #{ActiveMerchant::VERSION}"
+            }
+          end
         end
       end
     end

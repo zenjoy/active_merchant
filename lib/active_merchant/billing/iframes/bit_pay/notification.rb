@@ -2,9 +2,9 @@ require 'net/http'
 
 module ActiveMerchant #:nodoc:
   module Billing #:nodoc:
-    module Integrations #:nodoc:
+    module Iframes #:nodoc:
       module BitPay
-        class Notification < ActiveMerchant::Billing::Integrations::Notification
+        class Notification < ActiveMerchant::Billing::Iframes::Notification
           def complete?
             ['complete', 'confirmed'].include?(status)
           end

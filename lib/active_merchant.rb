@@ -59,5 +59,6 @@ require 'active_merchant/version'
 module ActiveMerchant #:nodoc:
   module Billing #:nodoc:
     autoload :Integrations, 'active_merchant/billing/integrations'
+    autoload :Iframes, 'active_merchant/billing/iframes'
   end
 end
