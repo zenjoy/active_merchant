@@ -78,6 +78,9 @@ module ActiveMerchant #:nodoc:
             request = Net::HTTP::Post.new(uri.request_uri)
             request.content_type = "application/json"
             request.body = @fields.to_json
+
+            puts request.body
+
             headers.each { |k,v| request[k] = v }
 
             http.request(request)
