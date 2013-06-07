@@ -56,7 +56,7 @@ module ActiveMerchant #:nodoc:
           end
 
           def expires_in
-            (@invoice['expireTime'] - @invoice['currentTime']) / 1000
+            (@invoice['expirationTime'] - @invoice['currentTime']) / 1000
           end
 
           private
