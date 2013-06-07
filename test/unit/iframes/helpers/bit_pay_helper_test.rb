@@ -25,7 +25,7 @@ class BitPayHelperTest < Test::Unit::TestCase
     assert_field 'api_key', 'cody@example.com'
 
     assert_field 'price', '5.00'
-    assert_field 'orderID', 'order-500'
+    assert_field 'posData', 'order-500'
   end
 
   def test_currency_with_no_cents

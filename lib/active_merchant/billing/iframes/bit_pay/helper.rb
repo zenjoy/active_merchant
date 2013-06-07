@@ -11,7 +11,7 @@ module ActiveMerchant #:nodoc:
           mapping :amount, 'price'
           mapping :currency, 'currency'
 
-          mapping :order, 'orderID'
+          mapping :order, 'posData'
 
           mapping :customer, :name       => 'buyerName',
                              :email      => 'buyerEmail',
