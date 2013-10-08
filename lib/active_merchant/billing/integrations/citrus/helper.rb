@@ -11,7 +11,7 @@ module ActiveMerchant
           mapping :credential3, 'pmt_url'
           mapping :currency, 'currency'
 
-          mapping :customer, :first_name => 'firstName',:last_name => 'lastName', :email => 'email', :phone => 'mobileNo'
+          mapping :customer, :first_name => 'firstName',:last_name => 'lastName', :email => 'email', :phone => 'phoneNumber'
 
           mapping :billing_address, :city => 'addressCity', :address1 => 'addressStreet1', :address2 => 'addressStreet2',:state => 'addressState',:zip => 'addressZip', :country => 'addressCountry'
 
@@ -21,7 +21,6 @@ module ActiveMerchant
 
           def initialize(order, account, options = {})
             super
-            add_field 'paymentMode', 'NET_BANKING'
             add_field 'reqtime', (Time.now.to_i * 1000).to_s
           end
 

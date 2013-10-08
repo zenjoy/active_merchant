@@ -14,7 +14,6 @@ class CitrusHelperTest < Test::Unit::TestCase
     assert_equal '2c71a4ea7d2b88e151e60d9da38b2d4552568ba9', @helper.fields['secret_key']
     assert_equal 'USD', @helper.fields['currency']
     assert_equal 'gqwnliur74', @helper.fields['pmt_url']
-    assert_equal 'NET_BANKING', @helper.fields['paymentMode']
   end
 
   def test_customer_fields
@@ -42,7 +41,7 @@ class CitrusHelperTest < Test::Unit::TestCase
 
   def test_unknown_address_mapping
     @helper.billing_address :farm => 'CA'
-    assert_equal 8, @helper.fields.size
+    assert_equal 7, @helper.fields.size
   end
 
   def test_form_fields
